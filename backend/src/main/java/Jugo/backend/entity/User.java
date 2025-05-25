@@ -9,23 +9,20 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Getter
-@Setter
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    private String name;
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
