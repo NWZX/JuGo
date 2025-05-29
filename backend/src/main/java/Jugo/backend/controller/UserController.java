@@ -1,9 +1,7 @@
 package Jugo.backend.controller;
 
 import Jugo.backend.dto.UserDTO;
-import Jugo.backend.entity.User;
 import Jugo.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
