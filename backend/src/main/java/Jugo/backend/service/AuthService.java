@@ -1,5 +1,6 @@
 package Jugo.backend.service;
 
+import Jugo.backend.config.JwtUtils;
 import Jugo.backend.dto.AuthResponse;
 import Jugo.backend.entity.User;
 import Jugo.backend.repository.UserRepository;
@@ -11,33 +12,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     private final AuthenticationManager authManager;
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) throw new UsernameNotFoundException("User not found");
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
-    }
 
     public ResponseEntity<?> register(User user) {
         if (userRepository.findByUsername(user.getUsername()) != null) {
@@ -51,7 +37,7 @@ public class AuthService implements UserDetailsService {
         try {
             Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
             if (authentication.isAuthenticated()) {
-                AuthResponse authData = new AuthResponse(jwtService.generateToken(user.getUsername()), "Bearer");
+                AuthResponse authData = new AuthResponse(jwtUtils.generateToken(user.getUsername()), "Bearer");
                 return ResponseEntity.ok(authData);
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");

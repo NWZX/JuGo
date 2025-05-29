@@ -1,8 +1,7 @@
 package Jugo.backend.filter;
 
-import Jugo.backend.service.AuthService;
-import Jugo.backend.service.JwtService;
-import Jugo.backend.service.UserService;
+import Jugo.backend.config.JwtUtils;
+import Jugo.backend.service.UserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,8 +20,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-    private final AuthService authService;
+    private final JwtUtils jwtUtils;
+    private final UserDetailService userDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,11 +35,11 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
+        final String username = jwtUtils.extractUsername(jwt);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = authService.loadUserByUsername(username);
-            if (jwtService.validateToken(jwt, userDetails)) {
+            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            if (jwtUtils.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );

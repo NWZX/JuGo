@@ -1,11 +1,11 @@
-package Jugo.backend.service;
+package Jugo.backend.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
-public class JwtService {
+@Component
+public class JwtUtils {
 
     @Value("${app.secret-key}")
     private String secretKey;
